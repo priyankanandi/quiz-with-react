@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import cx from 'classnames';
 
 //component
 import Modal from '../component/Modal/Modal';
@@ -8,23 +7,22 @@ import Modal from '../component/Modal/Modal';
 import { questionsList } from '../constants/questionsList';
 
 const QuizContainer = (props) => {
-    // const [loading, setLoader] = useState(false);
     const [modalShow, setModal] = useState(false);
     const [disableButton, setDisable] = useState(true);
-    const [quizQuestion, setQuestion] = useState({});
+    const [quizList, setQuestion] = useState({});
     const [answer, setAnswer] = useState(null);
-    const [answerList, setAllAnswer] = useState([]);
-
+    const [answerCount, setCount] = useState(0);
     useEffect(() => {
-        setData(0);
+        setNextOrPreviousQuestion(0);
     },[]);
     
-    const setData = (index) => {
+    const setNextOrPreviousQuestion = (index) => {
         setQuestion({
             id: questionsList[index].id,
             question: questionsList[index].question,
-            answer : questionsList[index].answer,
+            correctAnswer : questionsList[index].answer,
             answerOptions : questionsList[index].options,
+            result: false,
         });
         
     }
@@ -33,65 +31,75 @@ const QuizContainer = (props) => {
         setModal(true);   
     }
 
-    const hideModal = () => {
-        setModal(false);
-    }
-
     const handlePrevious = () => {
-        const previousQuestion = quizQuestion.id - 2;
-        setData(previousQuestion);
+        const preQue = quizList.id - 2;
+        setNextOrPreviousQuestion(preQue);
         setDisable(false);
     }
 
-    const handleNext = () => {
-        const nextQuestion = quizQuestion.id;
-        setData(nextQuestion);
+    const handleNext = (e) => {
+        console.log(e)
+        const nextQue = quizList.id;
+        setNextOrPreviousQuestion(nextQue);
         setDisable(true);
-        // setAllAnswer([
-        //     ...answerList,
-        //     answer
-        // ]);
     }
 
-    const handleSelect = (event) => {
-        const selectedAnswer =  event.target.value;
-        setAnswer(selectedAnswer);
+    const handleSelect = (id, selectedAnswer) => {
         setDisable(false);
-        setAllAnswer(selectedAnswer); 
-        console.log(answerList)
+        setAnswer(selectedAnswer)
+        if(selectedAnswer === quizList.correctAnswer) {
+            setCount(answerCount+1);
+        }
     }
 
-   
+    const handleSubmit = (e) =>{
+        e.preventDefault();
+        setQuestion({...quizList, result : true})
+        setModal(false);   
+    }
 
     return (
-        <div className='m-3'>
-            <button type="button" className="btn btn-info" onClick={handleStart}>Start</button>
-            {quizQuestion && quizQuestion.id ? (
+        <>
+            {quizList.result ? (
+                answerCount === questionsList.length ? (
+                    <div>Wowwww you have got {answerCount}/{questionsList.length}</div>
+                ):
+                (
+                    <div>{answerCount} correct answer out of {questionsList.length}</div>
+                )
+            ): (
+            <>
+            <h1>Are you excited to take Quiz</h1>
+            <div>Click Start to begin</div>
+            <div>
+                <button type="button" className="info pointer" onClick={handleStart}>Start</button>
+            </div>  
+            {quizList && quizList.question ? (
                 <Modal 
                     show={modalShow} 
-                    handleClose={hideModal} 
                     handlePrevious={handlePrevious} 
-                    handleNext={handleNext} 
+                    handleNext={(e) => handleNext(e)} 
                     disabled={disableButton}
-                    quizQuestion={quizQuestion}
+                    quizList={quizList}
+                    handleSubmit={handleSubmit}
                     maxQuestions={questionsList.length}>
-                    <p className='question'>{quizQuestion.id}. {quizQuestion.question}</p>
-                    {quizQuestion.answerOptions.map((list) => {
+                    <p className='question'>{quizList.id}. {quizList.question}</p>
+                    {quizList.answerOptions.map((list) => {
                         return (
-                            <button type="button" 
+                            <button type="button pointer" 
                                 value={list}                                
-                                className={cx('options btn btn-secondary', {
-                                    'btn-warning' : answer === list,
-                                })}
-                                onClick={handleSelect} 
+                                className={`${answer === list ? 'warning' : 'secondary'} options`}                                 
+                                onClick={()=>handleSelect(quizList.id, list)} 
                                 key={list}>{list}</button>
                         )
                     })}
-                </Modal> 
-            ): (
-                <div className='spinner-border' />
+                </Modal>
+            ) : (
+                <div >loading...</div>
             )}
-        </div>        
+            </>
+            )}
+        </>        
     );
 }
 

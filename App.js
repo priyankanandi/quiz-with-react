@@ -1,3 +1,16 @@
-import React from "react";
-                                
-export default ({ name }) => <h1>Hello {name}!</h1>;
+import React from "react";  
+
+//component
+import QuizContainer from './containers/QuizContainer';
+
+const App = () => {
+    return (
+         <div className="quiz">
+            <div className="text-center">
+                <QuizContainer />
+            </div>           
+        </div>
+    )
+};
+
+export default App;
