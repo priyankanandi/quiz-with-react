@@ -1,0 +1,27 @@
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width:100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.modal-dialog {
+    top:20%;
+}
+
+@media (min-width: 576px) {
+    .modal-dialog {
+        max-width: 70% !important; 
+    }
+}
+
+.close {
+    background: transparent;
+    border: none;
+    font-size: 1.3rem;
+}
+
+
+  
