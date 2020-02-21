@@ -41,7 +41,7 @@ const QuizContainer = (props) => {
         setDisable(false);
     }
 
-    const handleNext = (event) => {
+    const handleNext = () => {
         setCount(counter + 1)
         const nextQue = quizList.id + 1 ;
         setNextOrPreviousQuestion(nextQue);
@@ -63,19 +63,17 @@ const QuizContainer = (props) => {
     }
 
     const handleSubmit = (event) =>{
-      let count=0;
+        let count = [];
         event.preventDefault();
         setQuestion({...quizList, result : true})
         setModal(false); 
         const answerindex=questionsList.map(list=> list.answerindex);
         for(var i=0 ; i < questionsList.length; i++) {
-          console.log(givenAnswer[i] === answerindex[i])
           if(givenAnswer[i] === answerindex[i]){
-            const count = i+ 1;
-            setTotalCount(count)
+            count.push(givenAnswer[i] === answerindex[i])
           }
         }
-    
+        setTotalCount(count.length);
     }
     return (
         <>
@@ -108,7 +106,7 @@ const QuizContainer = (props) => {
                         return (
                             <button type="button pointer" 
                                 value={index}
-                                className={`${ answer === list ? 'warning' : 'secondary'} options`}                                 
+                                className={`${ givenAnswer[counter] === index ? 'warning' : 'secondary'} options`}                                 
                                 onClick={(e)=> handleSelect(e, list)} 
                                 key={list}>{list}</button>
                         )
