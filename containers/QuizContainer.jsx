@@ -10,7 +10,7 @@ const QuizContainer = (props) => {
     const [modalShow, setModal] = useState(false);
     const [disableButton, setDisable] = useState(true);
     const [quizList, setQuestion] = useState({});
-    const [givenAnswer, setAnswerObject] = useState({});
+    const [optionSelected, setAnswerObject] = useState({});
     const [counter, setCount] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
 
@@ -44,7 +44,7 @@ const QuizContainer = (props) => {
         setCount(counter + 1)
         const nextQue = quizList.id + 1 ;
         setNextOrPreviousQuestion(nextQue);
-        if(givenAnswer[nextQue]) {
+        if(optionSelected[nextQue]) {
           setDisable(false);
         } else {
           setDisable(true);
@@ -52,10 +52,10 @@ const QuizContainer = (props) => {
     }
 
     const handleSelect = (event) => {
-      var answerObject = givenAnswer;
-      var indexParsed = parseInt(event.target.value)
+      var answerObject = optionSelected;
+      var indexParsed = parseInt(event.target.value);
       var questionIndex = counter;
-      answerObject[questionIndex] = indexParsed;
+      answerObject[questionIndex] = indexParsed;    
       setAnswerObject(answerObject);
       setDisable(false);
     }
@@ -67,22 +67,37 @@ const QuizContainer = (props) => {
         setModal(false); 
         const answerindex=questionsList.map(list=> list.answerindex);
         for(var i=0 ; i < questionsList.length; i++) {
-          if(givenAnswer[i] === answerindex[i]){
-            count.push(givenAnswer[i] === answerindex[i])
+          if(optionSelected[i] === answerindex[i]){
+            count.push(optionSelected[i] === answerindex[i])
           }
         }
         setTotalCount(count.length);
     }
 
+    const renderAnswerOptions =(key,index)=> {
+    return (
+              <button 
+                  type="button pointer" 
+                  value={index}
+                  className={`${optionSelected[counter] === index ? 'warning' : 'secondary'} options`}                                 
+                  onClick={(e)=>handleSelect(e)} 
+                  key={key}>{key}
+              </button>
+          )
+    }
+
+    const renderResult = (totalCount, length) => {
+      if(totalCount === length) {
+        return  <h1>Wowwww you got {totalCount}/{length}</h1>;
+      } else {
+        return <h1>{totalCount} correct answer out of {length}</h1>
+      }
+    }
+
     return (
         <>         
             {quizList.result ? (
-                totalCount === questionsList.length ? (
-                    <h1>Wowwww you got {totalCount}/{questionsList.length}</h1>
-                ):
-                (
-                    <h1>{totalCount} correct answer out of {questionsList.length}</h1>
-                )
+                renderResult(totalCount, questionsList.length)
             ) : (
             <>
             <h1>Are you excited to take Quiz</h1>
@@ -101,15 +116,7 @@ const QuizContainer = (props) => {
                     handleSubmit={handleSubmit}
                     maxQuestions={questionsList.length}>
                     <p className='question'>{quizList.id + 1}. {quizList.question}</p>
-                    {quizList.answerOptions.map((list,index) => {
-                        return (
-                            <button type="button pointer" 
-                                value={index}
-                                className={`${ givenAnswer[counter] === index ? 'warning' : 'secondary'} options`}                                 
-                                onClick={handleSelect} 
-                                key={list}>{list}</button>
-                        )
-                    })}
+                    {quizList.answerOptions.map(renderAnswerOptions)}
                 </Modal>
             ) : (
                 <div >loading...</div>
