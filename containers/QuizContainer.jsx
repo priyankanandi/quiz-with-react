@@ -81,7 +81,7 @@ const QuizContainer = (props) => {
         <>
             {quizList.result ? (
                 totalCount === questionsList.length ? (
-                    <h1>Wowwww you have got {totalCount}/{questionsList.length}</h1>
+                    <h1>Wowwww you got {totalCount}/{questionsList.length}</h1>
                 ):
                 (
                     <h1>{totalCount} correct answer out of {questionsList.length}</h1>
