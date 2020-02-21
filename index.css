@@ -43,6 +43,11 @@ button {
   border-color: #17a2b8;
 }
 
+.result {
+  text-align: left;
+  padding: 5px;
+}
+
 .warning {
   color: #fff;
   background-color: #ffc107;

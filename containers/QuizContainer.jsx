@@ -87,18 +87,45 @@ const QuizContainer = (props) => {
           )
     }
 
-    const renderResult = (totalCount, length) => {
+    const renderResult = (totalCount, questionsList) => {
+
       if(totalCount === length) {
-        return  <h1>Wowwww you got {totalCount}/{length}</h1>;
+        return  (
+          <>
+          <h1>Wowwww you got {totalCount}/{questionsList.length}</h1>;
+          {renderResultData(questionsList)}
+          </>
+          )
       } else {
-        return <h1>{totalCount} correct answer out of {length}</h1>
+        return (
+          <>
+          <h1>{totalCount} correct answer out of {questionsList.length}</h1>
+          {renderResultData(questionsList)}
+          </>
+          )
       }
+    }
+
+    const renderResultData = (questionsList) => {
+      return questionsList.length && 
+          questionsList.map(list=> {
+             return  (
+               <div  className='result'>
+              <div>question {list.id + 1}:{list.question} </div>
+              <div>correct answer: {list.options[list.answerindex]}</div>
+              <div>your answer: {list.options[optionSelected[counter]]} </div>
+              </div>
+             )}
+            )
+         
     }
 
     return (
         <>         
             {quizList.result ? (
-                renderResult(totalCount, questionsList.length)
+              <>
+                {renderResult(totalCount, questionsList)}
+              </>
             ) : (
             <>
             <h1>Are you excited to take Quiz</h1>
@@ -124,6 +151,7 @@ const QuizContainer = (props) => {
             )}
             </>
             )}
+            
         </>        
     );
 }
