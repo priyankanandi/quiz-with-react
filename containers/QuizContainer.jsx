@@ -54,6 +54,7 @@ const QuizContainer = (props) => {
     const handleSelect = (event) => {
       var answerObject = optionSelected;
       var indexParsed = parseInt(event.target.value);
+      setNextOrPreviousQuestion(counter);
       var questionIndex = counter;
       answerObject[questionIndex] = indexParsed;    
       setAnswerObject(answerObject);
