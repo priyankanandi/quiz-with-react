@@ -92,7 +92,7 @@ const QuizContainer = (props) => {
       if(totalCount === length) {
         return  (
           <>
-          <h1>Wowwww you got {totalCount}/{questionsList.length}</h1>;
+          <h1>Wowwww you got {totalCount}/{questionsList.length}</h1>
           {renderResultData(questionsList)}
           </>
           )
