@@ -13,6 +13,7 @@ const QuizContainer = (props) => {
     const [givenAnswer, setAnswerObject] = useState({});
     const [counter, setCount] = useState(0);
     const [totalCount, setTotalCount] = useState(0);
+    const [answer, setAnswer] = useState(null);
 
     useEffect(() => {
         setNextOrPreviousQuestion(0);
@@ -55,6 +56,7 @@ const QuizContainer = (props) => {
       var answerObject = givenAnswer;
       var indexParsed = parseInt(event.target.value)
       var questionIndex = counter;
+      setAnswer(list);
       answerObject[questionIndex] = indexParsed;
       setAnswerObject(answerObject);
       setDisable(false);
@@ -106,7 +108,7 @@ const QuizContainer = (props) => {
                         return (
                             <button type="button pointer" 
                                 value={index}
-                                className={`${ givenAnswer[counter] == index ? 'warning' : 'secondary'} options`}                                 
+                                className={`${ answer === list ? 'warning' : 'secondary'} options`}                                 
                                 onClick={(e)=> handleSelect(e, list)} 
                                 key={list}>{list}</button>
                         )
