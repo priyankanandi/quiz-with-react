@@ -4,14 +4,16 @@ import React, { useEffect, useState } from 'react';
 import Modal from '../component/Modal/Modal';
 
 //constants
-import { questionsList } from '../constants/questionsList';
+import { questionsList } from '../api/questionsList';
 
 const QuizContainer = (props) => {
     const [modalShow, setModal] = useState(false);
     const [disableButton, setDisable] = useState(true);
     const [quizList, setQuestion] = useState({});
-    const [answer, setAnswer] = useState(null);
-    const [answerCount, setCount] = useState(0);
+    const [givenAnswer, setAnswerObject] = useState({});
+    const [counter, setCount] = useState(0);
+    const [totalCount, setTotalCount] = useState(0);
+
     useEffect(() => {
         setNextOrPreviousQuestion(0);
     },[]);
@@ -20,8 +22,8 @@ const QuizContainer = (props) => {
         setQuestion({
             id: questionsList[index].id,
             question: questionsList[index].question,
-            correctAnswer : questionsList[index].answer,
             answerOptions : questionsList[index].options,
+            answerIndex: questionsList[index].answerindex,
             result: false,
         });
         
@@ -32,40 +34,55 @@ const QuizContainer = (props) => {
     }
 
     const handlePrevious = () => {
-        const preQue = quizList.id - 2;
+        setCount(counter - 1)
+        const preQue = quizList.id - 1;
         setNextOrPreviousQuestion(preQue);
         setDisable(false);
     }
 
-    const handleNext = (e) => {
-        console.log(e)
-        const nextQue = quizList.id;
+    const handleNext = (event) => {
+        setCount(counter + 1)
+        const nextQue = quizList.id + 1 ;
         setNextOrPreviousQuestion(nextQue);
-        setDisable(true);
-    }
-
-    const handleSelect = (id, selectedAnswer) => {
-        setDisable(false);
-        setAnswer(selectedAnswer)
-        if(selectedAnswer === quizList.correctAnswer) {
-            setCount(answerCount+1);
+        if(givenAnswer[nextQue]) {
+          setDisable(false);
+        } else {
+          setDisable(true);
         }
     }
 
-    const handleSubmit = (e) =>{
-        e.preventDefault();
-        setQuestion({...quizList, result : true})
-        setModal(false);   
+    const handleSelect = (event, list) => {
+      var answerObject = givenAnswer;
+      var indexParsed = parseInt(event.target.value)
+      var questionIndex = counter;
+      answerObject[questionIndex] = indexParsed;
+      setAnswerObject(answerObject);
+      setDisable(false);
     }
 
+    const handleSubmit = (event) =>{
+      let count=0;
+        event.preventDefault();
+        setQuestion({...quizList, result : true})
+        setModal(false); 
+        const answerindex=questionsList.map(list=> list.answerindex);
+        for(var i=0 ; i < questionsList.length; i++) {
+          console.log(givenAnswer[i] === answerindex[i])
+          if(givenAnswer[i] === answerindex[i]){
+            const count = i+ 1;
+            setTotalCount(count)
+          }
+        }
+    
+    }
     return (
         <>
             {quizList.result ? (
-                answerCount === questionsList.length ? (
-                    <div>Wowwww you have got {answerCount}/{questionsList.length}</div>
+                totalCount === questionsList.length ? (
+                    <h1>Wowwww you have got {totalCount}/{questionsList.length}</h1>
                 ):
                 (
-                    <div>{answerCount} correct answer out of {questionsList.length}</div>
+                    <h1>{totalCount} correct answer out of {questionsList.length}</h1>
                 )
             ): (
             <>
@@ -78,18 +95,19 @@ const QuizContainer = (props) => {
                 <Modal 
                     show={modalShow} 
                     handlePrevious={handlePrevious} 
-                    handleNext={(e) => handleNext(e)} 
+                    handleNext={handleNext} 
                     disabled={disableButton}
                     quizList={quizList}
+                    questionNumber={quizList.id + 1}
                     handleSubmit={handleSubmit}
                     maxQuestions={questionsList.length}>
-                    <p className='question'>{quizList.id}. {quizList.question}</p>
-                    {quizList.answerOptions.map((list) => {
+                    <p className='question'>{quizList.id + 1}. {quizList.question}</p>
+                    {quizList.answerOptions.map((list,index) => {
                         return (
                             <button type="button pointer" 
-                                value={list}                                
-                                className={`${answer === list ? 'warning' : 'secondary'} options`}                                 
-                                onClick={()=>handleSelect(quizList.id, list)} 
+                                value={index}
+                                className={`${ givenAnswer[counter] == index ? 'warning' : 'secondary'} options`}                                 
+                                onClick={(e)=> handleSelect(e, list)} 
                                 key={list}>{list}</button>
                         )
                     })}
