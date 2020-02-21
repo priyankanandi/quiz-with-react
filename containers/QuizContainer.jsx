@@ -110,7 +110,7 @@ const QuizContainer = (props) => {
       return questionsList.length && 
           questionsList.map(list=> {
              return  (
-               <div  className='result'>
+               <div  className='result' key={list.id}>
               <div>question {list.id + 1}:{list.question} </div>
               <div>correct answer: {list.options[list.answerindex]}</div>
               <div>your answer: {list.options[optionSelected[counter]]} </div>
